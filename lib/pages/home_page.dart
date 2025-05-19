@@ -1,7 +1,23 @@
-import 'package:app_face_auth/main.dart';
+import 'package:app_face_auth/pages/start_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
+  Future<void> _logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Elimina el estado de autenticación y usuario guardado
+    await prefs.remove('isAuthenticated');
+    await prefs.remove('usuario');
+
+    // Navega a StartPage y elimina el historial de navegación
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => StartPage()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,12 +39,7 @@ class HomePage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Cerrar sesión'),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => BiometricMongoScreen()),
-                );
-              },
+              onTap: () => _logout(context),
             ),
           ],
         ),
