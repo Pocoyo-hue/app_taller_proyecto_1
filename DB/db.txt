@@ -1,0 +1,73 @@
+CREATE DATABASE PlataformaEducativa;
+USE PlataformaEducativa;
+
+-- Tabla de Usuarios
+CREATE TABLE Usuarios (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    usu_nombre VARCHAR(100),
+    usu_correo VARCHAR(100),
+    usu_contraseña VARCHAR(100),
+    usu_fecharegis DATE,
+    usu_tipousuario VARCHAR(50)
+);
+
+-- Tabla de Materiales Educativos
+CREATE TABLE Materiales_Educativos (
+    id_material INT PRIMARY KEY AUTO_INCREMENT,
+    mat_titulo VARCHAR(200),
+    mat_descrip TEXT,
+    mat_tipomat VARCHAR(100),
+    mat_fechasubida DATE,
+    mat_contenido TEXT,
+    id_usuario INT,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de Contenido Convertido
+CREATE TABLE Contenido_Convertido (
+    id_contenido INT PRIMARY KEY AUTO_INCREMENT,
+    cont_tipocont VARCHAR(100),
+    cont_urlaudio TEXT,
+    id_material INT,
+    FOREIGN KEY (id_material) REFERENCES Materiales_Educativos(id_material)
+);
+
+-- Tabla de Sesiones
+CREATE TABLE Sesiones (
+    id_sesion INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT,
+    se_fechasesion DATE,
+    se_duracion TIME,
+    se_tiposesion VARCHAR(100),
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de Dispositivos
+CREATE TABLE Dispositivos (
+    id_disposit INT PRIMARY KEY AUTO_INCREMENT,
+    dis_nombre VARCHAR(100),
+    dis_tipo VARCHAR(100),
+    id_usuario INT,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de Notificaciones
+CREATE TABLE Notificaciones (
+    id_notificacion INT PRIMARY KEY AUTO_INCREMENT,
+    not_mensaje TEXT,
+    not_fechanvio DATE,
+    id_usuario INT,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+);
+
+-- Tabla de Resultados de Evaluación
+CREATE TABLE Resultados_Eval (
+    id_resultado INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT,
+    re_nivelcog VARCHAR(100),
+    re_coment TEXT,
+    re_fechaeval DATE,
+    id_sesion INT,
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
+    FOREIGN KEY (id_sesion) REFERENCES Sesiones(id_sesion)
+);
