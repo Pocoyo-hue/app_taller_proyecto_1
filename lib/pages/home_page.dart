@@ -1,6 +1,7 @@
 import 'package:app_face_auth/pages/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'scan_menu_page.dart';
 
 class HomePage extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
@@ -28,13 +29,51 @@ class HomePage extends StatelessWidget {
         child: ListView(
           children: [
             DrawerHeader(
-              child: Text('Menú', style: TextStyle(color: Colors.white, fontSize: 24)),
-              decoration: BoxDecoration(color: Colors.blue),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.red, Colors.orange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Text('Menú Principal',
+              style: TextStyle(color: Colors.white, fontSize: 24)),
             ),
             ListTile(
               leading: Icon(Icons.home),
               title: Text('Inicio'),
               onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: Icon(Icons.document_scanner),
+              title: Text('Escanear texto'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ScanMenuPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.volume_up),
+              title: Text('Configuración de Lectura'),
+              onTap: () {
+                // Navega a la página correspondiente
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.map),
+              title: Text('Navegación Interior'),
+              onTap: () {
+                // Navega a la página correspondiente
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.warning),
+              title: Text('Alerta de Obstáculos'),
+              onTap: () {
+                // Navega a la página correspondiente
+              },
             ),
             ListTile(
               leading: Icon(Icons.logout),
