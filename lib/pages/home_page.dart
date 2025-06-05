@@ -2,6 +2,7 @@ import 'package:app_face_auth/pages/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'scan_menu_page.dart';
+import 'math_page.dart';
 
 class HomePage extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
@@ -45,8 +46,8 @@ class HomePage extends StatelessWidget {
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
-              leading: Icon(Icons.document_scanner),
-              title: Text('Escanear texto'),
+              leading: Icon(Icons.document_scanner, color: Colors.amber),
+              title: Text('Escanear texto', style: TextStyle(color: Colors.amber)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -55,15 +56,18 @@ class HomePage extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.volume_up),
-              title: Text('Configuración de Lectura'),
+              leading: Icon(Icons.warning, color: Colors.blue),
+              title: Text('Matemática', style: TextStyle(color: Colors.blue)),
               onTap: () {
-                // Navega a la página correspondiente
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MathVoiceScreen()),
+                );
               },
             ),
             ListTile(
-              leading: Icon(Icons.map),
-              title: Text('Navegación Interior'),
+              leading: Icon(Icons.volume_up, color: Colors.green),
+              title: Text('Reconocer objetos', style: TextStyle(color: Colors.green)),
               onTap: () {
                 // Navega a la página correspondiente
               },

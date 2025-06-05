@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_face_auth/pages/home_page.dart';
 import 'package:app_face_auth/pages/start_page.dart';
 import 'package:app_face_auth/pages/scan_menu_page.dart';
+import 'package:app_face_auth/pages/math_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/ocr': (context) => ScanMenuPage(),
+        '/ocr': (context) => MathVoiceScreen(),
         // agrega más rutas si creas más páginas como configuración o navegación
       },
     );

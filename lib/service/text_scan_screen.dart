@@ -62,6 +62,12 @@ class _TextScanScreenState extends State<TextScanScreen> {
               label: Text('Escanear con Cámara'),
               onPressed: _pickImageAndScan,
             ),
+            SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: Icon(Icons.volume_up),
+              label: Text('Repetir Voz'),
+              onPressed: scannedText.isNotEmpty ? () => _speak(scannedText) : null,
+            ),
             SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
