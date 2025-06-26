@@ -1,80 +1,80 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:math_expressions/math_expressions.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:image_picker/image_picker.dart';
 
-class MathVoiceScreen extends StatefulWidget {
+class MathCameraPage extends StatefulWidget {
   @override
-  _MathVoiceScreenState createState() => _MathVoiceScreenState();
+  _MathCameraPageState createState() => _MathCameraPageState();
 }
 
-class _MathVoiceScreenState extends State<MathVoiceScreen> {
-  final TextEditingController _controller = TextEditingController();
-  String _result = '';
+class _MathCameraPageState extends State<MathCameraPage> {
   final FlutterTts flutterTts = FlutterTts();
+  String _recognizedText = '';
 
-  void _calculateAndSpeak() {
-    String input = _controller.text;
-    try {
-      Parser p = Parser();
-      Expression exp = p.parse(input);
-      ContextModel cm = ContextModel();
-      double eval = exp.evaluate(EvaluationType.REAL, cm);
+  Future<void> _scanTextFromCamera() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile == null) return;
 
-      setState(() {
-        _result = eval.toString();
-      });
+    final inputImage = InputImage.fromFile(File(pickedFile.path));
+    final textRecognizer = TextRecognizer();
+    final recognizedText = await textRecognizer.processImage(inputImage);
+    await textRecognizer.close();
 
-      _speak(input, eval);
-    } catch (e) {
-      setState(() {
-        _result = 'Error: operación inválida';
-      });
-      flutterTts.speak('No se pudo entender la operación');
-    }
+    setState(() => _recognizedText = recognizedText.text);
+    await _speak(_recognizedText);
   }
 
-  Future<void> _speak(String operation, double result) async {
+  Future<void> _speak(String text) async {
+    if (text.isEmpty) return;
     await flutterTts.setLanguage('es-ES');
     await flutterTts.setPitch(1.0);
-
-    String texto = 'La operación $operation es igual a ${result.toString()}';
-    await flutterTts.speak(texto);
+    await flutterTts.speak('La operación detectada es: $text');
   }
 
   @override
   void dispose() {
     flutterTts.stop();
-    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Operaciones Matemáticas con Voz')),
+      appBar: AppBar(title: const Text('Leer Operación Matemática')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Escribe una operación (ej: 3 + 4 * 2)',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 10),
             ElevatedButton.icon(
-              icon: Icon(Icons.calculate),
-              label: Text('Calcular y Leer'),
-              onPressed: _calculateAndSpeak,
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Escanear con Cámara'),
+              onPressed: _scanTextFromCamera,
             ),
-            SizedBox(height: 20),
-            Text(
-              _result,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            )
+            const SizedBox(height: 12),
+
+            // 🔊 Botón para repetir la voz
+            ElevatedButton.icon(
+              icon: const Icon(Icons.volume_up),
+              label: const Text('Repetir voz'),
+              onPressed: _recognizedText.isEmpty ? null : () => _speak(_recognizedText),
+            ),
+            const SizedBox(height: 20),
+
+            const Text('Texto detectado:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  _recognizedText,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
           ],
         ),
       ),

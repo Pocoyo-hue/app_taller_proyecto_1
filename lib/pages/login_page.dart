@@ -16,46 +16,58 @@ class _LoginPageState extends State<LoginPage> {
   String status = 'Autenticación con biometría requerida...';
 
   Future<void> _authenticateAndLogin() async {
-    final dni = _dniController.text.trim();
+  final dni = _dniController.text.trim();
 
-    if (dni.isEmpty) {
+  if (dni.isEmpty) {
+    setState(() {
+      status = 'Por favor ingrese su DNI.';
+    });
+    return;
+  }
+
+  // 🔧 Para pruebas: omitimos autenticación biométrica
+  setState(() {
+    status = 'Autenticación omitida. Verificando usuario...';
+  });
+
+  await _verifyUserInMongo(dni);
+
+  // ---------------------------------------------
+  // 🧬 AUTENTICACIÓN BIOMÉTRICA COMENTADA PARA PRUEBAS
+  
+  try {
+    bool canCheckBiometrics = await auth.canCheckBiometrics;
+    if (!canCheckBiometrics) {
       setState(() {
-        status = 'Por favor ingrese su DNI.';
+        status = 'El dispositivo no soporta autenticación biométrica.';
       });
       return;
     }
 
-    try {
-      bool canCheckBiometrics = await auth.canCheckBiometrics;
-      if (!canCheckBiometrics) {
-        setState(() {
-          status = 'El dispositivo no soporta autenticación biométrica.';
-        });
-        return;
-      }
+    bool authenticated = await auth.authenticate(
+      localizedReason: 'Escanea tu huella o rostro para iniciar sesión',
+      options: const AuthenticationOptions(biometricOnly: true),
+    );
 
-      bool authenticated = await auth.authenticate(
-        localizedReason: 'Escanea tu huella o rostro para iniciar sesión',
-        options: const AuthenticationOptions(biometricOnly: true),
-      );
-
-      if (authenticated) {
-        setState(() {
-          status = 'Autenticación exitosa. Verificando usuario...';
-        });
-
-        await _verifyUserInMongo(dni);
-      } else {
-        setState(() {
-          status = 'Autenticación fallida.';
-        });
-      }
-    } catch (e) {
+    if (authenticated) {
       setState(() {
-        status = 'Error durante la autenticación: $e';
+        status = 'Autenticación exitosa. Verificando usuario...';
+      });
+
+      await _verifyUserInMongo(dni);
+    } else {
+      setState(() {
+        status = 'Autenticación fallida.';
       });
     }
+  } catch (e) {
+    setState(() {
+      status = 'Error durante la autenticación: $e';
+    });
   }
+  
+  // ---------------------------------------------
+}
 
   Future<void> _verifyUserInMongo(String dni) async {
     try {

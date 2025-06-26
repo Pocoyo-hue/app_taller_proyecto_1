@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'scan_menu_page.dart';
 import 'math_page.dart';
+import 'object_detection_page.dart';
+import 'obstacle_detection_page.dart';
 
 class HomePage extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
@@ -61,7 +63,7 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MathVoiceScreen()),
+                  MaterialPageRoute(builder: (context) => MathCameraPage()),
                 );
               },
             ),
@@ -69,14 +71,20 @@ class HomePage extends StatelessWidget {
               leading: Icon(Icons.volume_up, color: Colors.green),
               title: Text('Reconocer objetos', style: TextStyle(color: Colors.green)),
               onTap: () {
-                // Navega a la página correspondiente
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ObjectDetectionScreen()),
+                );
               },
             ),
             ListTile(
               leading: Icon(Icons.warning),
               title: Text('Alerta de Obstáculos'),
               onTap: () {
-                // Navega a la página correspondiente
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ObstacleDetectorScreen()),
+                );
               },
             ),
             ListTile(
